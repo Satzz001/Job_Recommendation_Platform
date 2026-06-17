@@ -1,0 +1,48 @@
+spring.application.name=jobplatform
+
+# ==================== FILE UPLOAD LIMITS ====================
+spring.servlet.multipart.max-file-size=5MB
+spring.servlet.multipart.max-request-size=5MB
+
+# ==================== DATABASE ====================
+# Option A: Supabase PostgreSQL
+spring.datasource.url=jdbc:postgresql://<host>:5432/postgres
+spring.datasource.username=postgres
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# Option B: Local MySQL
+# spring.datasource.url=jdbc:mysql://localhost:3306/jobplatform
+# spring.datasource.username=root
+# spring.datasource.password=${DB_PASSWORD}
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.connection-timeout=20000
+
+# ==================== DEFAULT ADMIN SEED ====================
+app.admin.email=${ADMIN_EMAIL:admin@jobplatform.com}
+app.admin.password=${ADMIN_PASSWORD:changeme}
+
+# ==================== JWT ====================
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION:86400000}
+
+# ==================== ADOBE PDF SERVICES ====================
+adobe.credentials.path=adobe-credentials.json
+adobe.credentials.environment-variable-name=ADOBE_CREDENTIALS_JSON
+adobe.pdfservices.api.url=https://pdf-services-api.adobe.io
+adobe.client.timeout=30000
+adobe.client.max-retries=3
+adobe.pdf.extraction.enabled=true
+
+# ==================== OPENROUTER AI ====================
+openrouter.api.url=https://openrouter.ai/api/v1/chat/completions
+openrouter.api.key=${OPENROUTER_API_KEY}
+openrouter.model=openai/gpt-oss-120b:free
+openrouter.normalization.model=openai/gpt-oss-120b:free
+
+# ==================== GEMINI EMBEDDINGS ====================
+gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent
+gemini.api.key=${GEMINI_API_KEY}

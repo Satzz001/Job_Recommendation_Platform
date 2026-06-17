@@ -1,0 +1,99 @@
+# ==================== BUILD & COMPILATION ====================
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+
+# ==================== IDE & EDITOR FILES ====================
+### IntelliJ IDEA ###
+.idea/
+.idea/shelf/
+*.iws
+*.iml
+*.ipr
+*.iml
+out/
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### vim/nano/emacs ###
+*~
+*.swp
+*.swo
+*#
+.#*
+
+# ==================== OPERATING SYSTEM & TEMPORARY FILES ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==================== SENSITIVE & CONFIGURATION FILES ====================
+### Credentials & Secrets ###
+src/main/resources/adobe-credentials.json
+adobe-credentials.json
+src/main/resources/application.properties
+src/main/resources/application-*.properties
+.env
+.env.local
+.env.*.local
+secrets.properties
+
+# ==================== PROJECT-SPECIFIC TEMPORARY FILES ====================
+chges
+context/last.md
+context/HELP.md
+context
+
+# ==================== LOGS & DEBUG ====================
+*.log
+logs/
+.factorypath
+
+# ==================== LOCAL AI ASSISTANT FILES ====================
+.claude/
+.claudeignore
+
+# ==================== MAVEN WRAPPER ====================
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/MavenWrapperDownloader.java
+
+# ==================== MERGE CONFLICT FILES ====================
+*.orig
+*.rej
+
+# ==================== NODE (if applicable) ====================
+node_modules/
+npm-debug.log
+yarn-error.log
