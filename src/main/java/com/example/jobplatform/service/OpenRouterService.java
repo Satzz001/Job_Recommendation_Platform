@@ -78,15 +78,44 @@ public class OpenRouterService {
      * @throws RuntimeException if the HTTP call fails or the response isn't valid JSON
      */
     public ParsedResumeDTO parse(String resumeText) {
-        try {
-            log.info("Sending resume text to OpenRouter (model: {}, {} chars)", model, resumeText.length());
+        log.info("Sending resume text to OpenRouter (model: {}, {} chars)", model, resumeText.length());
+        String aiContent = callChatCompletion(SYSTEM_PROMPT, resumeText);
 
+        try {
+            // Deserialize the AI's JSON string directly into ParsedResumeDTO.
+            // @JsonIgnoreProperties(ignoreUnknown = true) on the DTO handles any extra fields.
+            ParsedResumeDTO dto = objectMapper.readValue(aiContent, ParsedResumeDTO.class);
+            log.info("OpenRouter parsing complete — skills found: {}, experience: {}",
+                dto.getSkills() != null ? dto.getSkills().size() : 0, dto.getExperience());
+            return dto;
+        } catch (Exception e) {
+            log.error("Failed to parse OpenRouter response as ParsedResumeDTO", e);
+            throw new RuntimeException("Failed to call OpenRouter API: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Sends a system+user message pair to OpenRouter and returns the raw
+     * text of the AI's reply (no JSON deserialization). Used for free-form
+     * chat completions such as the job-search chat assistant.
+     *
+     * @param systemPrompt instructions establishing the AI's role/constraints
+     * @param userMessage  the user-turn content
+     * @return the AI's raw reply text
+     * @throws RuntimeException if the HTTP call fails
+     */
+    public String chat(String systemPrompt, String userMessage) {
+        return callChatCompletion(systemPrompt, userMessage);
+    }
+
+    private String callChatCompletion(String systemPrompt, String userMessage) {
+        try {
             // Build the chat request body as a Java Map, then serialize to JSON
             Map<String, Object> requestBody = Map.of(
                 "model", model,
                 "messages", List.of(
-                    Map.of("role", "system", "content", SYSTEM_PROMPT),
-                    Map.of("role", "user",   "content", resumeText)
+                    Map.of("role", "system", "content", systemPrompt),
+                    Map.of("role", "user",   "content", userMessage)
                 )
             );
 
@@ -109,10 +138,10 @@ public class OpenRouterService {
 
             if (httpResponse.statusCode() != 200) {
                 log.error("OpenRouter error (HTTP {}): {}", httpResponse.statusCode(), httpResponse.body());
-                throw new RuntimeException("Resume parsing failed due to an upstream error");
+                throw new RuntimeException("OpenRouter call failed due to an upstream error");
             }
 
-            // Pull out choices[0].message.content — this is the AI's JSON string
+            // Pull out choices[0].message.content — this is the AI's reply text
             JsonNode root = objectMapper.readTree(httpResponse.body());
             String aiContent = root
                 .path("choices").get(0)
@@ -121,14 +150,7 @@ public class OpenRouterService {
                 .asText();
 
             log.debug("AI response content: {}", aiContent);
-
-            // Deserialize the AI's JSON string directly into ParsedResumeDTO.
-            // @JsonIgnoreProperties(ignoreUnknown = true) on the DTO handles any extra fields.
-            ParsedResumeDTO dto = objectMapper.readValue(aiContent, ParsedResumeDTO.class);
-            log.info("OpenRouter parsing complete — skills found: {}, experience: {}",
-                dto.getSkills() != null ? dto.getSkills().size() : 0, dto.getExperience());
-
-            return dto;
+            return aiContent;
 
         } catch (RuntimeException e) {
             throw e;

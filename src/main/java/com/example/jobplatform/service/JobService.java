@@ -179,7 +179,7 @@ public class JobService {
         return job;
     }
 
-    private JobResponseDTO toResponse(Job job) {
+    public JobResponseDTO toResponse(Job job) {
         JobResponseDTO dto = new JobResponseDTO();
         dto.setId(job.getId());
         dto.setTitle(job.getTitle());

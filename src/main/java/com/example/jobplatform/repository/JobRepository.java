@@ -23,4 +23,18 @@ public interface JobRepository extends JpaRepository<Job, Long> {
           AND j.description_embedding IS NOT NULL
         """, nativeQuery = true)
     List<JobSimilarityResult> getSemanticSimilarities(@Param("userId") Long userId, @Param("jobIds") List<Long> jobIds);
+
+    interface JobSearchResult {
+        Long getId();
+        Double getSimilarity();
+    }
+
+    @Query(value = """
+        SELECT j.id AS id, 1 - (j.description_embedding <=> CAST(:embedding AS vector)) AS similarity
+        FROM jobs j
+        WHERE j.description_embedding IS NOT NULL
+        ORDER BY j.description_embedding <=> CAST(:embedding AS vector)
+        LIMIT :topK
+        """, nativeQuery = true)
+    List<JobSearchResult> findTopSimilarJobs(@Param("embedding") String embedding, @Param("topK") int topK);
 }
