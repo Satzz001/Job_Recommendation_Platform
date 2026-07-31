@@ -33,7 +33,8 @@ public class UserJobInteractionService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job with id " + jobId + " not found"));
 
-        UserJobInteraction interaction = new UserJobInteraction();
+        UserJobInteraction interaction = interactionRepository.findByUserIdAndJobId(userId, jobId)
+                .orElseGet(UserJobInteraction::new);
         interaction.setUser(user);
         interaction.setJob(job);
         interaction.setInteractionType(type);

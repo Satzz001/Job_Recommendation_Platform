@@ -40,6 +40,23 @@ public class JobChatService {
         "If none of the listed jobs are a good match for the user's request, say so honestly " +
         "instead of forcing a recommendation. Be concise and helpful.";
 
+    private static final String GENERAL_CHAT_SYSTEM_PROMPT =
+        "You are the chat assistant embedded in a job platform. Respond naturally to whatever " +
+        "the user says — greetings, small talk, career advice, interview prep, resume tips, or " +
+        "any other question — the same way a helpful general-purpose assistant would. If the " +
+        "user has a listed skill/experience profile and it's relevant, feel free to use it. " +
+        "Do not invent specific job listings — if the user actually wants job recommendations, " +
+        "tell them to ask you to find matching jobs. Be concise and conversational.";
+
+    private static final String INTENT_CLASSIFIER_SYSTEM_PROMPT =
+        "You are an intent classifier for a job platform chat assistant. Classify the user's " +
+        "message into exactly one category:\n\n" +
+        "- JOB_SEARCH: the user wants job recommendations, is describing the kind of role/company " +
+        "they want, or is asking about specific job listings.\n" +
+        "- GENERAL_ADVICE: anything else — greetings, small talk, career advice, interview tips, " +
+        "resume/skill guidance, or any question that is not asking to be matched to job listings.\n\n" +
+        "Respond with ONLY one word: JOB_SEARCH or GENERAL_ADVICE. No punctuation, no explanation.";
+
     private final GeminiEmbeddingService geminiEmbeddingService;
     private final JobRepository jobRepository;
     private final UserProfileRepository userProfileRepository;
@@ -62,6 +79,10 @@ public class JobChatService {
     }
 
     public ChatResponseDTO answer(Long userId, String userMessage) {
+        if (!isJobSearchIntent(userMessage)) {
+            return answerGeneralAdvice(userId, userMessage);
+        }
+
         String queryEmbedding = geminiEmbeddingService.generateEmbedding(userMessage);
         if (queryEmbedding == null) {
             return new ChatResponseDTO(
@@ -105,6 +126,41 @@ public class JobChatService {
         }
 
         return new ChatResponseDTO(answer, sourceJobs);
+    }
+
+    /**
+     * Classifies whether the user's message is asking for job recommendations
+     * (needs the RAG retrieval flow) or general career advice (no retrieval needed).
+     * Defaults to JOB_SEARCH on classification failure, preserving prior behavior.
+     */
+    private boolean isJobSearchIntent(String userMessage) {
+        try {
+            String verdict = openRouterService.chat(INTENT_CLASSIFIER_SYSTEM_PROMPT, userMessage)
+                .trim()
+                .toUpperCase();
+            return !verdict.contains("GENERAL_ADVICE");
+        } catch (RuntimeException e) {
+            log.warn("Intent classification failed — defaulting to job search flow", e);
+            return true;
+        }
+    }
+
+    /**
+     * Answers anything that isn't a job-search request — greetings, small talk, career
+     * advice, etc. — directly, skipping vector retrieval since there's no job-listing
+     * context needed to ground the answer.
+     */
+    private ChatResponseDTO answerGeneralAdvice(Long userId, String userMessage) {
+        String userProfileLine = buildUserProfileLine(userId);
+        String answer;
+        try {
+            String userPrompt = userProfileLine + "User question: " + userMessage;
+            answer = openRouterService.chat(GENERAL_CHAT_SYSTEM_PROMPT, userPrompt);
+        } catch (RuntimeException e) {
+            log.error("General chat generation failed", e);
+            answer = "Sorry, I couldn't process your request right now. Please try again shortly.";
+        }
+        return new ChatResponseDTO(answer, List.of());
     }
 
     /**
