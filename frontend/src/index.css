@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #8B5CF6;
+  --accent-hover: #7C3AED;
+  --accent-dim: #EDE4FD;
+  --accent-border: #8B5CF6;
+  --accent-contrast: #18140D;
+  --border: #18140D;
+}
+
+@layer base {
+  body { @apply bg-cream text-ink font-sans text-sm; }
+  ::selection { background: var(--accent-dim); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-cream-3 rounded-full border-2 border-cream; }
+  a { color: var(--accent-hover); }
+  a:hover { text-decoration: underline; }
+  .material-symbols-rounded {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    user-select: none;
+  }
+  .material-symbols-rounded.filled { font-variation-settings: 'FILL' 1, 'wght' 600; }
+}
+
+@layer components {
+  .card { @apply bg-white border-2 border-ink rounded-xl2 shadow-brutal p-5; }
+  .card-interactive { @apply cursor-pointer transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg; }
+
+  .btn { @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-ink bg-white font-bold text-[13.5px] shadow-brutal-sm transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap; }
+  .btn-primary { background: var(--accent); color: var(--accent-contrast); @apply border-ink; }
+  .btn-ghost { @apply border-transparent bg-transparent shadow-none text-muted hover:bg-cream-2 hover:translate-x-0 hover:translate-y-0 hover:shadow-none; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .btn-lg { @apply px-5 py-3 text-[14.5px]; }
+  .btn-icon { @apply p-2; }
+  .btn-block { @apply w-full justify-center; }
+
+  .pill { background: var(--accent-dim); border-color: var(--accent-border); @apply inline-flex items-center gap-1 px-3 py-1 rounded-full border font-bold text-xs whitespace-nowrap; }
+  .pill-accent { background: var(--accent); color: var(--accent-contrast); @apply border-ink; }
+  .pill-good { @apply bg-green-100 border-green-700 text-green-700; }
+  .pill-warn { @apply bg-amber-100 border-amber-700 text-amber-700; }
+
+  .field-input { @apply w-full bg-white border-2 border-ink rounded-lg px-3.5 py-2.5 text-sm font-medium outline-none shadow-brutal-sm transition-transform focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-brutal placeholder:text-faint; }
+  .field-label { @apply text-[11.5px] font-bold text-muted tracking-wide; }
+
+  .skill-chip { @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-[1.5px] border-ink bg-cream-2 text-xs font-semibold; }
+  .skill-chip-matched { background: var(--accent-dim); border-color: var(--accent-border); }
+
+  .job-logo { @apply w-11 h-11 rounded-lg bg-cream-2 border-2 border-ink grid place-items-center font-extrabold text-[15px] shrink-0; }
+
+  .nav-link { @apply flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold text-[14px] border-2 border-transparent transition-transform hover:bg-cream-2; }
+  .nav-link-active { background: var(--accent-dim); @apply border-ink shadow-brutal-sm -translate-x-0.5 -translate-y-0.5; }
+
+  .filter-pill { @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full border-2 border-ink bg-white font-bold text-[13px] shadow-brutal-sm transition-transform hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal; }
+  .filter-pill-active { background: var(--accent-dim); }
+
+  .search-input { @apply w-full bg-white border-2 border-ink rounded-full pl-11 pr-4 py-2.5 text-sm font-medium outline-none shadow-brutal-sm transition-transform focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-brutal placeholder:text-faint; }
+
+  .tabs-tab { @apply flex items-center gap-1.5 px-3.5 py-2.5 font-bold text-[13.5px] text-muted border-b-[3px] border-transparent -mb-0.5; }
+  .tabs-tab-active { @apply text-ink; border-color: var(--accent); }
+
+  .chat-bubble { @apply max-w-[72%] px-4 py-3 rounded-xl border-2 border-ink text-[13.5px] leading-relaxed font-medium shadow-brutal-sm; }
+  .chat-bubble-user { background: var(--accent); color: var(--accent-contrast); @apply self-end; }
+  .chat-bubble-ai { @apply bg-white self-start; }
+
+  .skeleton-block { @apply bg-cream-2 border-2 border-ink rounded-lg animate-pulse; }
+}
