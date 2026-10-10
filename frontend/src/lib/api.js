@@ -36,7 +36,7 @@ async function request(path, opts = {}) {
   const headers = { ...(opts.headers || {}) };
   if (!opts.isForm && opts.body) headers["Content-Type"] = "application/json";
   const tok = Auth.token();
-  if (tok) headers["Authorization"] = "Bearer " + tok;
+  if (tok) headers["Authorization"] = `Bearer ${tok}`;
 
   let res;
   try {
