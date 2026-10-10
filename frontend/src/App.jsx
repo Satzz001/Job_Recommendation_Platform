@@ -11,6 +11,7 @@ import Activity from "./pages/Activity.jsx";
 import Resume from "./pages/Resume.jsx";
 import Profile from "./pages/Profile.jsx";
 import Chat from "./pages/Chat.jsx";
+import Landing from "./pages/Landing.jsx";
 
 const PAGE_TITLES = { "/dashboard": "Dashboard", "/jobs": "Browse jobs", "/activity": "Your activity", "/resume": "Resume", "/profile": "Profile", "/chat": "Ask AI" };
 
@@ -56,6 +57,7 @@ export default function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage />} />
 
